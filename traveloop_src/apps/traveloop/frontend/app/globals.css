@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 214 100% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 233 86% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 216 33% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 192 90% 94%;
+    --accent-foreground: 223 47% 11%;
+    --destructive: 0 76% 57%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 233 86% 63%;
+    --success: 153 60% 45%;
+    --warning: 42 96% 54%;
+    --info: 198 93% 60%;
+    --chart-1: 233 86% 63%;
+    --chart-2: 197 93% 58%;
+    --chart-3: 153 60% 45%;
+    --chart-4: 43 96% 56%;
+    --chart-5: 340 82% 60%;
+    --radius: 1.5rem;
+    --font-heading: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+    --font-body: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-height: 100vh;
+  }
+}
+
+.auth-surface {
+  background:
+    radial-gradient(circle at top left, rgba(100, 123, 255, 0.22), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(40, 199, 255, 0.18), transparent 35%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+}

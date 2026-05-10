@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  image         String?
+  location      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  trips         Trip[]
+  accounts      Account[]
+  sessions      Session[]
+  notes         Note[]
+}
+
+model Trip {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  description   String
+  coverImage    String
+  startDate     DateTime
+  endDate       DateTime
+  status        String        @default("PLANNING")
+  travelerCount Int           @default(1)
+  currency      String        @default("USD")
+  budgetTarget  Float         @default(0)
+  ownerId       String
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  stops         Stop[]
+  budgetItems   BudgetItem[]
+  packingItems  PackingItem[]
+  notes         Note[]
+  sharedTrip    SharedTrip?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Stop {
+  id            String      @id @default(cuid())
+  cityName      String
+  country       String
+  coverImage    String?
+  summary       String?
+  arrivalDate   DateTime
+  departureDate DateTime
+  orderIndex    Int
+  tripId        String
+  trip          Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activities    Activity[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Activity {
+  id            String       @id @default(cuid())
+  title         String
+  description   String
+  type          String
+  location      String
+  durationMins  Int
+  estimatedCost Float        @default(0)
+  startTime     DateTime?
+  endTime       DateTime?
+  orderIndex    Int          @default(0)
+  stopId        String
+  stop          Stop         @relation(fields: [stopId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model BudgetItem {
+  id          String         @id @default(cuid())
+  label       String
+  category    String
+  amount      Float
+  date        DateTime?
+  isLocked    Boolean        @default(false)
+  tripId      String
+  trip        Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model PackingItem {
+  id          String      @id @default(cuid())
+  label       String
+  category    String
+  quantity    Int         @default(1)
+  isPacked    Boolean     @default(false)
+  tripId      String
+  trip        Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Note {
+  id          String      @id @default(cuid())
+  title       String
+  content     String
+  tripId      String
+  authorId    String
+  trip        Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model SharedTrip {
+  id          String      @id @default(cuid())
+  tripId      String      @unique
+  trip        Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  shareCode   String      @unique
+  isPublic    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionToken])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}
